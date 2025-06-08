@@ -34,4 +34,4 @@ A arquitetura é composta por três serviços independentes:
 1. Clone este repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/nome-do-repositorio.git
+git clone git clone https://github.com/Marquesleticia/microsservicos-culinaria.git
