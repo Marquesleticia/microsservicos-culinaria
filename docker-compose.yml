@@ -1,0 +1,15 @@
+services:
+  servico_receitas:
+    build: ./servico_receitas
+    ports:
+      - "5002:5000"
+
+  servico_ingredientes:
+    build: ./servico_ingredientes
+    ports:
+      - "5003:5000"
+  
+  servico_frontend:
+    build: ./servico_frontend
+    ports:
+      - "8080:80"

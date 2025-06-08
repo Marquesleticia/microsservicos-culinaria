@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App de Culinária</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-8 max-w-4xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-orange-600">Meu App de Culinária</h1>
+            <p class="text-lg text-gray-600 mt-2">Descubra receitas e ingredientes especiais!</p>
+        </header>
+
+        <main>
+            <section class="bg-white p-6 rounded-lg shadow-md mb-8">
+                <h2 class="text-2xl font-semibold mb-4">✨ Ingrediente do Dia</h2>
+                <button id="btn-ingrediente" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Sugerir Ingrediente!</button>
+                <div id="ingrediente-resultado" class="mt-4 text-xl font-medium text-orange-800 bg-orange-100 p-4 rounded-lg hidden"></div>
+            </section>
+
+            <section class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold mb-4">📚 Livro de Receitas</h2>
+                <button id="btn-receitas" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Buscar Todas as Receitas</button>
+                <div id="receitas-resultado" class="mt-4 space-y-4"></div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 text-gray-500">
+            <p>Projeto de Microserviços com Flask e Docker</p>
+        </footer>
+    </div>
+
+    <script>
+       
+        const btnIngrediente = document.getElementById('btn-ingrediente');
+        const resultadoIngrediente = document.getElementById('ingrediente-resultado');
+        const btnReceitas = document.getElementById('btn-receitas');
+        const resultadoReceitas = document.getElementById('receitas-resultado');
+
+        const urlIngredientes = 'http://localhost:5003/ingrediente-do-dia';
+        const urlReceitas = 'http://localhost:5002/receitas';
+
+        btnIngrediente.addEventListener('click', async () => {
+            try {
+                const response = await fetch(urlIngredientes); 
+                if (!response.ok) throw new Error('Erro ao buscar ingrediente.');
+                const data = await response.json(); 
+                
+                resultadoIngrediente.textContent = `Que tal cozinhar com ${data.ingrediente_do_dia} hoje?`;
+                resultadoIngrediente.classList.remove('hidden');
+            } catch (error) {
+                resultadoIngrediente.textContent = 'Não foi possível obter a sugestão. Tente novamente.';
+                resultadoIngrediente.classList.remove('hidden');
+            }
+        });
+
+        btnReceitas.addEventListener('click', async () => {
+            try {
+                const response = await fetch(urlReceitas); 
+                if (!response.ok) throw new Error('Erro ao buscar receitas.');
+                const data = await response.json(); 
+                
+                resultadoReceitas.innerHTML = ''; 
+
+                if (data.length === 0) {
+                    resultadoReceitas.innerHTML = '<p>Nenhuma receita encontrada.</p>';
+                    return;
+                }
+                
+                
+                data.forEach(receita => {
+                    const divReceita = document.createElement('div');
+                    divReceita.className = 'p-4 border rounded-lg bg-gray-50';
+                    divReceita.innerHTML = `
+                        <h3 class="text-xl font-semibold text-teal-800">${receita.nome}</h3>
+                        <p class="text-gray-700 mt-1">${receita.instrucoes}</p>
+                    `;
+                    resultadoReceitas.appendChild(divReceita);
+                });
+
+            } catch (error) {
+                resultadoReceitas.innerHTML = '<p>Não foi possível carregar as receitas. Tente novamente.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
